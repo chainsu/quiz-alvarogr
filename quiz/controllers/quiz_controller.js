@@ -13,12 +13,27 @@ exports.load = function(req, res, next, quizId) {
 };
 
 // GET /quizes
-exports.index = function(req, res) {
-  models.Quiz.findAll().then(
-    function(quizes) {
-      res.render('quizes/index', { quizes: quizes});
+exports.index = function(req, res){
+    var query = {};
+
+    if(req.query.search)
+    {
+        var search = req.query.search;
+        search = '%' + search.replace(" ", "%") + '%';
+
+        var like = "ilike";
+        if(models.Quiz.daoFactoryManager.sequelize.options.dialect === "sqlite"){
+            like = "like";
+        }
+
+        query = {where: ["lower(pregunta) " + like + " lower(?)", search]};
     }
-  ).catch(function(error) { next(error);})
+
+    models.Quiz.findAll(query).then(function(quizes){
+        res.render('quizes/index', {quizes: quizes});
+    }).catch(function(error){
+        next(error);
+    });
 };
 
 // GET /quizes/:id

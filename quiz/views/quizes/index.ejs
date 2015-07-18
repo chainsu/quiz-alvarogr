@@ -1,5 +1,18 @@
 <table>
-  <% var i; for (i=0; i < quizes.length; i++) { %>        
+  <% 
+  if (quizes.length==0){
+  %> 
+  	<p>No existe ninguna pregunta que contenga el texto introducido en la búsqueda</p>
+  <%
+  }
+  var i; for (i=0; i < quizes.length; i++) { %>        
      <tr><td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td></tr> 
   <% } %>
 </table>
+<br><br>
+<form method="get" action="/quizes">        
+  Búsqueda:
+  <input type="text" name="search" value=""/>
+  <input type="submit" value="Enviar">
+</form>
+
