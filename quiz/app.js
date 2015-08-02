@@ -43,6 +43,26 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use(function(req, res, next){
+  if (req.session.user) {
+    if (!req.session.horaEjecucion) {
+    	req.session.horaEjecucion = new Date().getTime();
+	console.log("*** PRIMER ACCESO");
+    } 
+    else if (new Date().getTime() - req.session.horaEjecucion > 120000) {
+	delete req.session.horaEjecucion;
+	delete req.session.user;
+	console.log("*** SESION CADUCADA");
+	//res.render('sessions/new', {errors: [{"message": "La sesión ha caducado, logueate de nuevo"}]});
+    }   
+    else {
+	req.session.horaEjecucion = new Date().getTime();
+	console.log("*** SESION RENOVADA");
+    }
+  }
+  next();
+});
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler
